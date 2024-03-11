@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="modules\BaseArrFuncs.ixx" />
+    <ClCompile Include="modules\Search.ixx" />
     <ClCompile Include="modules\Sorts.ixx" />
   </ItemGroup>
   <ItemGroup>
