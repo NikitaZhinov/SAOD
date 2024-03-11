@@ -135,9 +135,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseArrFuncs.ixx" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Sorts.ixx" />
+    <ClCompile Include="modules\BaseArrFuncs.ixx" />
+    <ClCompile Include="modules\Sorts.ixx" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
