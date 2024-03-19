@@ -1,9 +1,9 @@
-#include <random>
 #include <iostream>
+#include <random>
 
 export module BaseArrFuncs;
 
-export template<typename T> void FillInc(T &A, size_t len) {
+export template <typename T> void FillInc(T &A, size_t len) {
     for (size_t i = 0; i < len; i++)
         A[i] = i;
 }

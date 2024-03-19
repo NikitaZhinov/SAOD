@@ -1,9 +1,10 @@
-#include <cmath>
+ï»¿#include <cmath>
 #include <cstdio>
-#include <vector>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <locale>
+#include <print>
+#include <vector>
 
 import BaseArrFuncs;
 import Sorts;
@@ -14,29 +15,28 @@ int main() {
 
     int x;
 
-    std::cout << "Ââåäèòå çíà÷åíèå: ";
+    std::print("Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ: ");
     std::cin >> x;
-    std::cout << std::endl;
 
     // printf("| Size array |        Theoretical shell         |           M + C shell            |\n");
     // printf("|            | decreasing | middle | increasing | decreasing | random | increasing |\n");
     // printf("|------------|------------|--------|------------|------------|--------|------------|\n");
 
-    std::cout << "| Size array | Binary Search 1 | Binary Search 2 |" << std::endl;
-    std::cout << "|------------|-----------------|-----------------|" << std::endl;
+    std::println("| Size array | Binary Search 1 | Binary Search 2 |");
+    std::println("|------------|-----------------|-----------------|");
 
     for (size_t len_arr = 100; len_arr <= 1000; len_arr += 100) {
         std::vector<int> arr(len_arr);
-        
+
         FillInc(arr, len_arr);
 
         BinarySearch1(arr, len_arr, x);
         BinarySearch2(arr, len_arr, x);
 
-        std::cout << "|" << std::setw(11) << len_arr << ' ';
-        std::cout << "|" << std::setw(16) << COMPARE_BINARY_SEARCH_1 << ' ';
-        std::cout << "|" << std::setw(16) << COMPARE_BINARY_SEARCH_2 << ' ';
-        std::cout << "|" << std::endl;
+        std::print("|{:11} ", len_arr);
+        std::print("|{:16} ", COMPARE_BINARY_SEARCH_1);
+        std::print("|{:16} ", COMPARE_BINARY_SEARCH_2);
+        std::println("|");
     }
 
     return 0;
