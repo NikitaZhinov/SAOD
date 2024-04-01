@@ -6,27 +6,27 @@
 
 export module Sorts;
 
-export template <class T> size_t SelectSort(T &A) {
+export template <class T> size_t SelectSort(T &arr) {
     size_t m = 0, c = 0;
-    for (size_t i = 0; i < A.size() - 1; i++) {
+    for (size_t i = 0; i < arr.size() - 1; i++) {
         int snp = i;
-        for (size_t j = i + 1; j < A.size(); j++) {
-            if (A[j] < A[snp])
+        for (size_t j = i + 1; j < arr.size(); j++) {
+            if (arr[j] < arr[snp])
                 snp = j;
             c++;
         }
-        std::swap(A[i], A[snp]);
+        std::swap(arr[i], arr[snp]);
         m += 3;
     }
     return m + c;
 }
 
-export template <class T> size_t BubbleSort(T &A) {
+export template <class T> size_t BubbleSort(T &arr) {
     size_t m = 0, c = 0;
-    for (size_t i = 0; i < A.size(); i++) {
-        for (size_t j = 1; j < A.size() - i; j++) {
-            if (A[j] < A[j - 1]) {
-                std::swap(A[j], A[j - 1]);
+    for (size_t i = 0; i < arr.size(); i++) {
+        for (size_t j = 1; j < arr.size() - i; j++) {
+            if (arr[j] < arr[j - 1]) {
+                std::swap(arr[j], arr[j - 1]);
                 m += 3;
             }
             c++;
@@ -35,13 +35,13 @@ export template <class T> size_t BubbleSort(T &A) {
     return m + c;
 }
 
-export template <class T> size_t ShakerSort(T &A) {
-    size_t L = 0, R = A.size() - 1, k = A.size() - 1;
+export template <class T> size_t ShakerSort(T &arr) {
+    size_t L = 0, R = arr.size() - 1, k = arr.size() - 1;
     size_t m = 0, c = 0;
     do {
         for (size_t j = R; j > L; j--) {
-            if (A[j] < A[j - 1]) {
-                std::swap(A[j], A[j - 1]);
+            if (arr[j] < arr[j - 1]) {
+                std::swap(arr[j], arr[j - 1]);
                 m += 3;
                 k = j;
             }
@@ -49,8 +49,8 @@ export template <class T> size_t ShakerSort(T &A) {
         }
         L = k;
         for (size_t j = L; j < R; j++) {
-            if (A[j] > A[j + 1]) {
-                std::swap(A[j], A[j + 1]);
+            if (arr[j] > arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
                 m += 3;
                 k = j;
             }
@@ -61,39 +61,39 @@ export template <class T> size_t ShakerSort(T &A) {
     return m + c;
 }
 
-export template <class T> size_t InsertSort(T &A) {
+export template <class T> size_t InsertSort(T &arr) {
     size_t m = 0, c = 0;
-    for (size_t i = 1; i < A.size(); i++) {
+    for (size_t i = 1; i < arr.size(); i++) {
         bool f = true;
-        auto t = A[i];
+        auto t = arr[i];
         long long j = i - 1;
-        while (j > -1 and t < A[j]) {
+        while (j > -1 and t < arr[j]) {
             f = false;
-            A[j + 1] = A[j];
+            arr[j + 1] = arr[j];
             j--;
             c++;
             m++;
         }
         if (f)
             c++;
-        A[j + 1] = t;
+        arr[j + 1] = t;
         m += 2;
     }
     return m + c;
 }
 
-export template <class T> size_t ShellSort(T &A) {
+export template <class T> size_t ShellSort(T &arr) {
     size_t m = 0, c = 0;
-    size_t M = (int)std::log2(A.size()) - 1;
+    size_t M = (int)std::log2(arr.size()) - 1;
     std::vector<int> h(M);
     h[0] = 1;
     for (int i = 1; i < M; i++)
         h[i] = 2 * h[i - 1] + 1;
     for (int a = M - 1; a >= 0; a--) {
-        for (size_t i = h[a]; i < A.size(); i++) {
+        for (size_t i = h[a]; i < arr.size(); i++) {
             bool f = true;
-            for (int j = i - h[a]; j >= 0 and A[j] > A[j + h[a]]; j -= h[a]) {
-                std::swap(A[j], A[j + h[a]]);
+            for (int j = i - h[a]; j >= 0 and arr[j] > arr[j + h[a]]; j -= h[a]) {
+                std::swap(arr[j], arr[j + h[a]]);
                 m += 3;
                 f = false;
                 c++;
@@ -105,18 +105,18 @@ export template <class T> size_t ShellSort(T &A) {
     return m + c;
 }
 
-export template <class T, class C> size_t ShellSort(T &A, C commpare) {
+export template <class T, class C> size_t ShellSort(T &arr, C commpare) {
     size_t m = 0, c = 0;
-    size_t M = (int)std::log2(A.size()) - 1;
+    size_t M = (int)std::log2(arr.size()) - 1;
     std::vector<int> h(M);
     h[0] = 1;
     for (int i = 1; i < M; i++)
         h[i] = 2 * h[i - 1] + 1;
     for (int a = M - 1; a >= 0; a--) {
-        for (size_t i = h[a]; i < A.size(); i++) {
+        for (size_t i = h[a]; i < arr.size(); i++) {
             bool f = true;
-            for (int j = i - h[a]; j >= 0 and commpare(A[j], A[j + h[a]]); j -= h[a]) {
-                std::swap(A[j], A[j + h[a]]);
+            for (int j = i - h[a]; j >= 0 and commpare(arr[j], arr[j + h[a]]); j -= h[a]) {
+                std::swap(arr[j], arr[j + h[a]]);
                 m += 3;
                 f = false;
                 c++;
@@ -124,6 +124,42 @@ export template <class T, class C> size_t ShellSort(T &A, C commpare) {
             if (f)
                 c++;
         }
+    }
+    return m + c;
+}
+
+export template <class T> void build_heap(T &arr, size_t l, size_t r, size_t &m, size_t &c) {
+    auto x = arr[l];
+    size_t i = l;
+    while (true) {
+        size_t j = 2 * i;
+        if (j > r)
+            break;
+        if (j < r and arr[j + 1] <= arr[j])
+            j++;
+        c++;
+        if (x <= arr[j]) {
+            c++;
+            break;
+        }
+        c++;
+        arr[i] = arr[j];
+        m++;
+        i = j;
+    }
+    arr[i] = x;
+    m += 2;
+}
+
+export template <class T> size_t HeapSort(T &arr) {
+    size_t m = 0, c = 0;
+    for (long long l = arr.size() / 2; l >= 0; l--)
+        build_heap(arr, l, arr.size() - 1, m, c);
+    size_t r = arr.size() - 1;
+    while (r > 0) {
+        std::swap(arr[0], arr[r--]);
+        m += 3;
+        build_heap(arr, 0, r, m, c);
     }
     return m + c;
 }
