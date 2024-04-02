@@ -1,5 +1,4 @@
-﻿#include <cmath>
-#include <locale>
+﻿#include <locale>
 #include <print>
 #include <vector>
 
@@ -8,9 +7,9 @@ import Sorts;
 import Search;
 
 int main() {
-    std::setlocale(LC_ALL, "rus");
+    std::setlocale(0, "rus");
 
-    std::println("|  N  | M + C teoretic |          M + C factic          |");
+    std::println("|  N  | M + C теоретик |          M + C factic          |");
     std::println("|     |                | decriment | random | increment |");
     std::println("|-----|----------------|-----------|--------|-----------|");
 

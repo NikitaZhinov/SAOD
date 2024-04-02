@@ -1,7 +1,4 @@
 #include <cmath>
-#include <cstddef>
-#include <functional>
-#include <iostream>
 #include <vector>
 
 export module Sorts;
@@ -128,7 +125,7 @@ export template <class T, class C> size_t ShellSort(T &arr, C commpare) {
     return m + c;
 }
 
-export template <class T> void build_heap(T &arr, size_t l, size_t r, size_t &m, size_t &c) {
+template <class T> void build_heap(T &arr, size_t l, size_t r, size_t &m, size_t &c) {
     auto x = arr[l];
     size_t i = l;
     while (true) {

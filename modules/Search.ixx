@@ -1,6 +1,6 @@
 export module Search;
 
-#define ELEMENT_IS_NOT_FOUND -1;
+constexpr auto ELEMENT_IS_NOT_FOUND = -1;
 
 export size_t COMPARE_BINARY_SEARCH_1 = 0;
 export size_t COMPARE_BINARY_SEARCH_2 = 0;
