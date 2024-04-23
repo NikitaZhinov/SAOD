@@ -160,3 +160,38 @@ export template <class T> size_t HeapSort(T &arr) {
     }
     return m + c;
 }
+
+template <class T> int64_t HoaraSort(T &arr, int64_t left, int64_t right, size_t &m, size_t &c) {
+    auto pivo = arr[left];
+    m++;
+    while (left <= right) {
+        c += 2;
+        while (arr[left] < pivo) {
+            left++;
+            c++;
+        }
+        while (arr[right] > pivo) {
+            right--;
+            c++;
+        }
+        if (left <= right) {
+            std::swap(arr[left++], arr[right--]);
+            m += 3;
+        }
+    }
+    return left;
+}
+
+template <class T> void QuickSort(T &arr, int64_t start, int64_t end, size_t &m, size_t &c) {
+    if (start >= end)
+        return;
+    int64_t rightStart = HoaraSort(arr, start, end, m, c);
+    QuickSort(arr, start, rightStart - 1, m, c);
+    QuickSort(arr, rightStart, end, m, c);
+}
+
+export template <class T> size_t QuickSort(T &arr) {
+    size_t m = 0, c = 0;
+    QuickSort(arr, 0, arr.size() - 1, m, c);
+    return m + c;
+}

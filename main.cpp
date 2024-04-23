@@ -5,27 +5,63 @@
 import BaseArrFuncs;
 import Sorts;
 import Search;
+import Contaners;
 
 int main() {
-    std::setlocale(0, "rus");
+    std::setlocale(LC_ALL, "rus");
 
-    std::println("|  N  | M + C теоретик |          M + C factic          |");
-    std::println("|     |                | decriment | random | increment |");
-    std::println("|-----|----------------|-----------|--------|-----------|");
+    std::println("Stack");
+    StackInt stack;
+    size_t size = 10;
 
-    for (size_t len = 100; len <= 500; len += 100) {
-        std::vector<int> arr(len);
+    stack.FillInc(size);
+    for (int i = 0; i < size; i++)
+        std::print("{} ", stack.pop());
+    std::println("");
 
-        std::print("|{:4} ", len);
-        std::print("|{:15} ", (int)(2 * len * std::log2(len) + len + 2 + len * std::log2(len) + 6.5 * len - 4));
+    stack.FillDec(size);
+    for (int i = 0; i < size; i++)
+        std::print("{} ", stack.pop());
+    std::println("");
 
-        FillDec(arr, len);
-        std::print("|{:10} ", HeapSort(arr));
-        FillRand(arr, len);
-        std::print("|{:7} ", HeapSort(arr));
-        FillInc(arr, len);
-        std::println("|{:10} |", HeapSort(arr));
-    }
+    stack.FillRand(size);
+    for (int i = 0; i < size; i++)
+        std::print("{} ", stack.pop());
+    std::println("");
+
+    std::println("\nQueue");
+    QueueInt queue;
+
+    queue.FillInc(size);
+    for (int i = 0; i < size; i++)
+        std::print("{} ", queue.pop());
+    std::println("");
+
+    queue.FillDec(size);
+    for (int i = 0; i < size; i++)
+        std::print("{} ", queue.pop());
+    std::println("");
+
+    queue.FillRand(size);
+    for (int i = 0; i < size; i++)
+        std::print("{} ", queue.pop());
+    std::println("");
+
+    std::println("\nList");
+    ListInt list;
+
+    // заполнение списка
+    for (int i = 0; i < size; i++)
+        list.push_back(i);
+
+    list.print();
+
+    std::println("Контрольная сумма: {}", list.CheckSum());
+    std::println("Количество серий {}", list.RunNumber());
+
+    list.clear();
+    std::println("Clear list");
+    list.print();
 
     return 0;
 }
