@@ -1,7 +1,7 @@
-#include <print>
-#include <random>
+#pragma once
 
-export module Contaners;
+#include <iostream>
+#include <random>
 
 class ContanerInt {
 protected:
@@ -58,7 +58,7 @@ public:
     virtual int check() = 0;
 };
 
-export class StackInt : public ContanerInt {
+class StackInt : public ContanerInt {
 public:
     int pop() override {
         int *data_copy = new int[__size];
@@ -78,7 +78,7 @@ public:
     }
 };
 
-export class QueueInt : public ContanerInt {
+class QueueInt : public ContanerInt {
 public:
     int pop() override {
         int *data_copy = new int[__size];
@@ -98,7 +98,7 @@ public:
     }
 };
 
-export class NodeListInt {
+class NodeListInt {
 public:
     NodeListInt *prev, *next;
     int __value;
@@ -107,7 +107,7 @@ public:
         prev(nullptr), next(nullptr), __value(value) {}
 };
 
-export class ListInt {
+class ListInt {
 private:
     NodeListInt *__first;
     NodeListInt *__last;
@@ -159,12 +159,12 @@ public:
         if (__size != 0) {
             NodeListInt *p = __first;
             for (int i = 0; i < __size; i++) {
-                std::print("{} ", p->__value);
+                std::cout << p->__value << " ";
                 p = p->next;
             }
-            std::println("");
+            std::cout << std::endl;
         } else
-            std::println("List is empty!");
+            std::cout << "List is empty!" << std::endl;
     }
 
     int operator[](size_t index) {

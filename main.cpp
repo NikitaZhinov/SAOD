@@ -1,53 +1,50 @@
-﻿#include <locale>
-#include <print>
+﻿#include <iostream>
 #include <vector>
 
-import BaseArrFuncs;
-import Sorts;
-import Search;
-import Contaners;
+#include <BaseArrFuncs.hpp>
+#include <Sorts.hpp>
+#include <Search.hpp>
+#include <Contaners.hpp>
 
 int main() {
-    std::setlocale(LC_ALL, "rus");
-
-    std::println("Stack");
+    std::cout << "Stack" << std::endl;
     StackInt stack;
     size_t size = 10;
 
     stack.FillInc(size);
     for (int i = 0; i < size; i++)
-        std::print("{} ", stack.pop());
-    std::println("");
+        std::cout << stack.pop() << " ";
+    std::cout << std::endl;
 
     stack.FillDec(size);
     for (int i = 0; i < size; i++)
-        std::print("{} ", stack.pop());
-    std::println("");
+        std::cout << stack.pop() << " ";
+    std::cout << std::endl;
 
     stack.FillRand(size);
     for (int i = 0; i < size; i++)
-        std::print("{} ", stack.pop());
-    std::println("");
+        std::cout << stack.pop() << " ";
+    std::cout << std::endl;
 
-    std::println("\nQueue");
+    std::cout << "\nQueue" << std::endl;
     QueueInt queue;
 
     queue.FillInc(size);
     for (int i = 0; i < size; i++)
-        std::print("{} ", queue.pop());
-    std::println("");
+        std::cout << queue.pop() << " ";
+    std::cout << std::endl;
 
     queue.FillDec(size);
     for (int i = 0; i < size; i++)
-        std::print("{} ", queue.pop());
-    std::println("");
+        std::cout << queue.pop() << " ";
+    std::cout << std::endl;
 
     queue.FillRand(size);
     for (int i = 0; i < size; i++)
-        std::print("{} ", queue.pop());
-    std::println("");
+        std::cout << queue.pop() << " ";
+    std::cout << std::endl;
 
-    std::println("\nList");
+    std::cout << "\nList" << std::endl;
     ListInt list;
 
     // заполнение списка
@@ -56,11 +53,11 @@ int main() {
 
     list.print();
 
-    std::println("Контрольная сумма: {}", list.CheckSum());
-    std::println("Количество серий {}", list.RunNumber());
+    std::cout << "Контрольная сумма: " << list.CheckSum() << std::endl;
+    std::cout << "Количество серий " << list.RunNumber() << std::endl;
 
     list.clear();
-    std::println("Clear list");
+    std::cout << "Clear list" << std::endl;
     list.print();
 
     return 0;
