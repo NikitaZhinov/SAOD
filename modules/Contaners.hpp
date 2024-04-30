@@ -3,121 +3,30 @@
 #include <iostream>
 #include <random>
 
-class ContanerInt {
-protected:
-    int *__data;
-    size_t __size;
-
+template <class T> class NodeList {
 public:
-    ContanerInt() {
-        __size = 0;
-        __data = new int[__size];
-    }
+    NodeList *prev, *next;
+    T __value;
 
-    ~ContanerInt() {
-        delete[] __data;
-    }
-
-    void FillInc(size_t value) {
-        for (size_t i = 0; i < value; i++)
-            push(i);
-    }
-
-    void FillDec(size_t value) {
-        for (size_t i = 0; i < value; i++)
-            push(value - i);
-    }
-
-    void FillRand(size_t value) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dist(0, 100);
-        for (size_t i = 0; i < value; i++)
-            push(dist(gen));
-    }
-
-    void push(int value) {
-        if (__size == 0) {
-            __size++;
-            __data = new int[__size];
-            __data[0] = value;
-        } else {
-            int *data_copy = new int[__size];
-            for (int i = 0; i < __size; i++)
-                data_copy[i] = __data[i];
-            delete[] __data;
-            __data = new int[++__size];
-            for (int i = 0; i < __size - 1; i++)
-                __data[i] = data_copy[i];
-            delete[] data_copy;
-            __data[__size - 1] = value;
-        }
-    }
-
-    virtual int pop() = 0;
-    virtual int check() = 0;
-};
-
-class StackInt : public ContanerInt {
-public:
-    int pop() override {
-        int *data_copy = new int[__size];
-        for (int i = 0; i < __size; i++)
-            data_copy[i] = __data[i];
-        delete[] __data;
-        __data = new int[--__size];
-        for (int i = 0; i < __size; i++)
-            __data[i] = data_copy[i];
-        int res = data_copy[__size];
-        delete[] data_copy;
-        return res;
-    }
-
-    int check() override {
-        return __data[__size - 1];
-    }
-};
-
-class QueueInt : public ContanerInt {
-public:
-    int pop() override {
-        int *data_copy = new int[__size];
-        for (int i = 0; i < __size; i++)
-            data_copy[i] = __data[i];
-        delete[] __data;
-        __data = new int[--__size];
-        for (int i = 1; i < __size + 1; i++)
-            __data[i - 1] = data_copy[i];
-        int res = data_copy[0];
-        delete[] data_copy;
-        return res;
-    }
-
-    int check() override {
-        return __data[0];
-    }
-};
-
-class NodeListInt {
-public:
-    NodeListInt *prev, *next;
-    int __value;
-
-    NodeListInt(int value) :
+    NodeList(int value) :
         prev(nullptr), next(nullptr), __value(value) {}
 };
 
-class ListInt {
+template <class T> class List {
 private:
-    NodeListInt *__first;
-    NodeListInt *__last;
+    NodeList *__first;
+    NodeList *__last;
     size_t __size;
 
 public:
-    ListInt() :
+    List() :
         __first(nullptr), __last(nullptr), __size(0) {}
 
-    ~ListInt() {
+    List(const List &l) {
+        copy(l);
+    }
+
+    ~List() {
         clear();
     }
 
@@ -133,7 +42,7 @@ public:
             delete __first;
             __first = __last = nullptr;
         } else {
-            NodeListInt *p = __last;
+            NodeList *p = __last;
             __last = __last->prev;
             __last->next = nullptr;
             delete p;
@@ -141,8 +50,8 @@ public:
         __size--;
     }
 
-    void push_back(int value) {
-        NodeListInt *p = new NodeListInt(value);
+    void push_back(T value) {
+        NodeList *p = new NodeList(value);
 
         if (__first == nullptr) {
             __first = p;
@@ -157,7 +66,7 @@ public:
 
     void print() {
         if (__size != 0) {
-            NodeListInt *p = __first;
+            NodeList *p = __first;
             for (int i = 0; i < __size; i++) {
                 std::cout << p->__value << " ";
                 p = p->next;
@@ -167,10 +76,10 @@ public:
             std::cout << "List is empty!" << std::endl;
     }
 
-    int operator[](size_t index) {
-        int res = INT32_MAX;
+    T operator[](size_t index) {
+        T res;
         if (index < __size and __first != nullptr) {
-            NodeListInt *p = __first;
+            NodeList *p = __first;
             for (size_t i = 0; i < index; i++)
                 p = p->next;
             res = p->__value;
@@ -178,10 +87,10 @@ public:
         return res;
     }
 
-    NodeListInt *get(size_t index) {
+    NodeList *get(size_t index) {
         if (__first == nullptr)
             return nullptr;
-        NodeListInt *p = __first;
+        NodeList *p = __first;
         for (size_t i = 0; i < index; i++) {
             p = p->next;
             if (!p)
@@ -190,8 +99,8 @@ public:
         return p;
     }
 
-    int CheckSum() {
-        int sum = 0;
+    uint64_t CheckSum() {
+        uint64_t sum = 0;
         for (size_t i = 0; i < __size; i++)
             sum += (*this)[i];
         return sum;
@@ -203,5 +112,119 @@ public:
             if ((*this)[i - 1] > (*this)[i])
                 res++;
         return res;
+    }
+
+    List operator=(const List &l) {
+        return copy(l);
+    }
+
+    List copy(const List &l) {
+        clear();
+        for (size_t i = 0; i < l.size(); i++)
+            push_back(l[i]);
+    }
+
+    size_t Merge(const List &a, const List &b, List &c) {
+        size_t m = 0, cc = 0;
+
+        size_t i = 0, j = 0, k = 0;
+        while (q != 0 and r != 0) {
+            if (a[i] <= b[j]) {
+                c[k++] = a[i++];
+                q--;
+            } else {
+                c[k++] = b[j++];
+                r--;
+            }
+            cc++;
+            m++;
+        }
+        while (q-- > 0) {
+            c[k++] = a[i++];
+            m++;
+        }
+        while (r-- > 0) {
+            c[k++] = b[j++];
+            m++;
+        }
+
+        return m + cc;
+    }
+
+    size_t Splitting(List &a, List&b) {
+        
+    }
+
+    size_t MergeSort(List a, List b) {
+        size_t m = 0, c = 0;
+
+        Splitting(a, b);
+        clear();
+        size_t p = 1, q = a.size(), r = b.size();
+        __size = q + r;
+        while (p < __size) {
+            Queue c0, c1;
+            size_t i = 0, m = n;
+            while (m > 0) {
+                if (m >= p)
+                    q = p;
+                else
+                    q = m;
+                m -= q;
+                if (m >= p)
+                    r = p;
+                else
+                    r = m;
+                m -= r;
+                Merge(a, q, b, r, i == 0 ? c0 : c1);
+                i = 1 - i;
+            }
+            a.clear();
+            for (size_t ii = 1; ii < c0.size(); ii++)
+                a.push_back(c0[ii]);
+            b.clear();
+            for (size_t ii = 1; ii < c1.size(); ii++)
+                b.push_back(c1[ii]);
+            p *= 2;
+        }
+        copy(c0);
+        return m + c;
+    }
+};
+
+
+template <class T> class Stack : public List {
+public:
+    void push(T value) {
+        push_back(value);
+    }
+
+    T pop() {
+        return pop_back();
+    }
+
+    T check() {
+        return (*this)[__size - 1];
+    }
+};
+
+template <class T> class Queue : public List {
+public:
+    void push(T value) {
+        push_back(value);
+    }
+
+    T pop() {
+        T temp = check();
+        if (__first == nullptr)
+            return temp;
+        NodeList<T> *p = __first;
+        __first = p->next;
+        delete p;
+        return temp;
+    }
+
+    T check() {
+        return (*this)[0];
     }
 };

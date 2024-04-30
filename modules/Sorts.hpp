@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <vector>
+#include "Contaners.hpp"
 
 template <class T> size_t SelectSort(T &arr) {
     size_t m = 0, c = 0;
@@ -162,7 +163,7 @@ template <class T> size_t HeapSort(T &arr) {
 }
 
 template <class T> int64_t HoaraSort(T &arr, int64_t left, int64_t right, size_t &m, size_t &c) {
-    auto pivo = arr[left];
+    auto pivo = arr[(left + right) / 2];
     m++;
     while (left <= right) {
         c += 2;

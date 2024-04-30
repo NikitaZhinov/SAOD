@@ -8,7 +8,7 @@
 
 int main() {
     std::cout << "Stack" << std::endl;
-    StackInt stack;
+    Stack stack;
     size_t size = 10;
 
     stack.FillInc(size);
@@ -27,7 +27,7 @@ int main() {
     std::cout << std::endl;
 
     std::cout << "\nQueue" << std::endl;
-    QueueInt queue;
+    Queue queue;
 
     queue.FillInc(size);
     for (int i = 0; i < size; i++)
@@ -45,7 +45,7 @@ int main() {
     std::cout << std::endl;
 
     std::cout << "\nList" << std::endl;
-    ListInt list;
+    List list;
 
     // заполнение списка
     for (int i = 0; i < size; i++)
