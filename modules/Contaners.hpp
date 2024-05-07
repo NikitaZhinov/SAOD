@@ -132,22 +132,22 @@ public:
         size_t m = 0, cc = 0;
 
         size_t i = 0, j = 0, k = 0;
-        while (q != 0 and r != 0) {
+        while (a.size() != 0 and b.size() != 0) {
             if (a[i] <= b[j]) {
                 c[k++] = a[i++];
-                q--;
+                a.__size--;
             } else {
                 c[k++] = b[j++];
-                r--;
+                b.__size--;
             }
             cc++;
             m++;
         }
-        while (q-- > 0) {
+        while (a.__size-- > 0) {
             c[k++] = a[i++];
             m++;
         }
-        while (r-- > 0) {
+        while (b.__size-- > 0) {
             c[k++] = b[j++];
             m++;
         }
