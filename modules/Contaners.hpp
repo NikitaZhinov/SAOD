@@ -22,6 +22,11 @@ public:
     List() :
         __first(nullptr), __last(nullptr), __size(0) {}
 
+    List(size_t n, const T &value) : List() {
+        for (size_t i = 0; i < n; i++)
+            push_back(value);
+    }
+
     List(const List &l) {
         copy(l);
     }
@@ -33,6 +38,10 @@ public:
     void clear() {
         while (__size > 0)
             pop_back();
+    }
+
+    size_t size() {
+        return __size;
     }
 
     T pop_back() {
@@ -81,14 +90,7 @@ public:
     }
 
     T operator[](size_t index) {
-        T res;
-        if (index < __size && __first != nullptr) {
-            NodeList<T> *p = __first;
-            for (size_t i = 0; i < index; i++)
-                p = p->next;
-            res = p->__value;
-        }
-        return res;
+        return this->get(index)->__value;
     }
 
     NodeList<T> *get(size_t index) {
@@ -122,33 +124,34 @@ public:
         return copy(l);
     }
 
-    List copy(const List &l) {
+    void copy(List &l) {
         clear();
         for (size_t i = 0; i < l.size(); i++)
             push_back(l[i]);
     }
 
-    size_t Merge(const List &a, const List &b, List &c) {
+    size_t Merge(List &a, List &b, List &c) {
         size_t m = 0, cc = 0;
 
         size_t i = 0, j = 0, k = 0;
-        while (a.size() != 0 and b.size() != 0) {
-            if (a[i] <= b[j]) {
-                c[k++] = a[i++];
-                a.__size--;
+        size_t size_a = a.__size, size_b = b.__size;
+        while (size_a != 0 && size_b != 0) {
+            if (a.get(i)->__value <= b.get(j)->__value) {
+                c.get(k++)->__value = a[i++];
+                size_a--;
             } else {
-                c[k++] = b[j++];
-                b.__size--;
+                c.get(k++)->__value = b[j++];
+                size_b--;
             }
             cc++;
             m++;
         }
-        while (a.__size-- > 0) {
-            c[k++] = a[i++];
+        while (size_a-- > 0) {
+            c.get(k++)->__value = a[i++];
             m++;
         }
-        while (b.__size-- > 0) {
-            c[k++] = b[j++];
+        while (size_b-- > 0) {
+            c.get(k++)->__value = b[j++];
             m++;
         }
 
@@ -156,19 +159,36 @@ public:
     }
 
     size_t Splitting(List &a, List&b) {
-        
+        size_t m = 0;
+        a.copy(*this);
+        size_t n = 1;
+        NodeList<T> *k = a.__first;
+        NodeList<T> *p = b.__first->next;
+        m += 2;
+        while (p != nullptr) {
+            n++;
+            k->next = p->next;
+            k = p;
+            p = p->next;
+            m += 3;
+        }
+        return m;
     }
 
-    size_t MergeSort(List a, List b) {
+    size_t MergeSort() {
         size_t m = 0, c = 0;
+        List a(1000, 0);
+        List b(1000, 0);
 
-        Splitting(a, b);
+        m += Splitting(a, b);
         clear();
         size_t p = 1, q = a.size(), r = b.size();
         __size = q + r;
+        List c0, c1;
         while (p < __size) {
-            Queue c0, c1;
-            size_t i = 0, m = n;
+            c0.clear();
+            c1.clear();
+            size_t i = 0, m = __size;
             while (m > 0) {
                 if (m >= p)
                     q = p;
@@ -180,7 +200,7 @@ public:
                 else
                     r = m;
                 m -= r;
-                Merge(a, q, b, r, i == 0 ? c0 : c1);
+                Merge(a, b, i == 0 ? c0 : c1);
                 i = 1 - i;
             }
             a.clear();

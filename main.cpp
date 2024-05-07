@@ -10,58 +10,27 @@
 int main() {
     std::setlocale(0, "rus");
 
-    std::cout << "Stack" << std::endl;
-    Stack<int> stack;
-    size_t size = 10;
+    printf("| Size array | M + C teor |              M + C               |\n");
+    printf("|            |            | decreasing | random | increasing |\n");
+    printf("|------------|------------|------------|--------|------------|\n");
 
-    stack.FillInc();
-    for (int i = 0; i < size; i++)
-        std::cout << stack.pop() << " ";
-    std::cout << std::endl;
+    for (size_t len_arr = 100; len_arr <= 500; len_arr += 100) {
+        List<int> Amin(len_arr, 0);
+        List<int> Amax(len_arr, 0);
+        List<int> Arand(len_arr, 0);
 
-    stack.FillDec();
-    for (int i = 0; i < size; i++)
-        std::cout << stack.pop() << " ";
-    std::cout << std::endl;
+        Amin.FillDec();
+        Amax.FillInc();
+        Arand.FillRand();
 
-    stack.FillRand();
-    for (int i = 0; i < size; i++)
-        std::cout << stack.pop() << " ";
-    std::cout << std::endl;
+        printf("| %10lu ", len_arr);
 
-    std::cout << "\nQueue" << std::endl;
-    Queue<int> queue;
+        printf("|%11lu ", len_arr);
 
-    queue.FillInc();
-    for (int i = 0; i < size; i++)
-        std::cout << queue.pop() << " ";
-    std::cout << std::endl;
-
-    queue.FillDec();
-    for (int i = 0; i < size; i++)
-        std::cout << queue.pop() << " ";
-    std::cout << std::endl;
-
-    queue.FillRand();
-    for (int i = 0; i < size; i++)
-        std::cout << queue.pop() << " ";
-    std::cout << std::endl;
-
-    std::cout << "\nList" << std::endl;
-    List<int> list;
-
-    // заполнение списка
-    for (int i = 0; i < size; i++)
-        list.push_back(i);
-
-    list.print();
-
-    std::cout << "Контрольная сумма: " << list.CheckSum() << std::endl;
-    std::cout << "Количество серий " << list.RunNumber() << std::endl;
-
-    list.clear();
-    std::cout << "Clear list" << std::endl;
-    list.print();
+        printf("|%11lu ", Amin.MergeSort());
+        printf("|%7lu ", Arand.MergeSort());
+        printf("|%11lu |\n", Amax.MergeSort());
+    }
 
     return 0;
 }
