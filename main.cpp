@@ -1,51 +1,54 @@
 ﻿#include <iostream>
 #include <vector>
+#include <locale>
 
-#include <BaseArrFuncs.hpp>
-#include <Sorts.hpp>
-#include <Search.hpp>
-#include <Contaners.hpp>
+#include "BaseArrFuncs.hpp"
+#include "Sorts.hpp"
+#include "Search.hpp"
+#include "Contaners.hpp"
 
 int main() {
+    std::setlocale(0, "rus");
+
     std::cout << "Stack" << std::endl;
-    Stack stack;
+    Stack<int> stack;
     size_t size = 10;
 
-    stack.FillInc(size);
+    stack.FillInc();
     for (int i = 0; i < size; i++)
         std::cout << stack.pop() << " ";
     std::cout << std::endl;
 
-    stack.FillDec(size);
+    stack.FillDec();
     for (int i = 0; i < size; i++)
         std::cout << stack.pop() << " ";
     std::cout << std::endl;
 
-    stack.FillRand(size);
+    stack.FillRand();
     for (int i = 0; i < size; i++)
         std::cout << stack.pop() << " ";
     std::cout << std::endl;
 
     std::cout << "\nQueue" << std::endl;
-    Queue queue;
+    Queue<int> queue;
 
-    queue.FillInc(size);
+    queue.FillInc();
     for (int i = 0; i < size; i++)
         std::cout << queue.pop() << " ";
     std::cout << std::endl;
 
-    queue.FillDec(size);
+    queue.FillDec();
     for (int i = 0; i < size; i++)
         std::cout << queue.pop() << " ";
     std::cout << std::endl;
 
-    queue.FillRand(size);
+    queue.FillRand();
     for (int i = 0; i < size; i++)
         std::cout << queue.pop() << " ";
     std::cout << std::endl;
 
     std::cout << "\nList" << std::endl;
-    List list;
+    List<int> list;
 
     // заполнение списка
     for (int i = 0; i < size; i++)

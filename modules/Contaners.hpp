@@ -5,7 +5,7 @@
 
 template <class T> class NodeList {
 public:
-    NodeList *prev, *next;
+    NodeList<T> *prev, *next;
     T __value;
 
     NodeList(int value) :
@@ -13,9 +13,9 @@ public:
 };
 
 template <class T> class List {
-private:
-    NodeList *__first;
-    NodeList *__last;
+protected:
+    NodeList<T> *__first;
+    NodeList<T> *__last;
     size_t __size;
 
 public:
@@ -35,23 +35,27 @@ public:
             pop_back();
     }
 
-    void pop_back() {
+    T pop_back() {
+        T res;
         if (__size == 0)
-            return;
+            return 0;
         if (__size == 1) {
+            res = __first->__value;
             delete __first;
             __first = __last = nullptr;
         } else {
-            NodeList *p = __last;
+            NodeList<T> *p = __last;
             __last = __last->prev;
             __last->next = nullptr;
+            res = p->__value;
             delete p;
         }
         __size--;
+        return res;
     }
 
     void push_back(T value) {
-        NodeList *p = new NodeList(value);
+        NodeList<T> *p = new NodeList<T>(value);
 
         if (__first == nullptr) {
             __first = p;
@@ -66,7 +70,7 @@ public:
 
     void print() {
         if (__size != 0) {
-            NodeList *p = __first;
+            NodeList<T> *p = __first;
             for (int i = 0; i < __size; i++) {
                 std::cout << p->__value << " ";
                 p = p->next;
@@ -78,8 +82,8 @@ public:
 
     T operator[](size_t index) {
         T res;
-        if (index < __size and __first != nullptr) {
-            NodeList *p = __first;
+        if (index < __size && __first != nullptr) {
+            NodeList<T> *p = __first;
             for (size_t i = 0; i < index; i++)
                 p = p->next;
             res = p->__value;
@@ -87,10 +91,10 @@ public:
         return res;
     }
 
-    NodeList *get(size_t index) {
+    NodeList<T> *get(size_t index) {
         if (__first == nullptr)
             return nullptr;
-        NodeList *p = __first;
+        NodeList<T> *p = __first;
         for (size_t i = 0; i < index; i++) {
             p = p->next;
             if (!p)
@@ -190,10 +194,27 @@ public:
         copy(c0);
         return m + c;
     }
+
+    void FillInc() {
+        for (size_t i = 0; i < __size; i++)
+            this->get(i)->__value = i;
+    }
+
+    void FillDec() {
+        for (size_t i = 1; i <= __size; i++)
+            this->get(i - 1)->__value = __size - i;
+    }
+
+    void FillRand() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, 100);
+        for (size_t i = 0; i < __size; i++)
+            this->get(i)->__value = dist(gen);
+    }
 };
 
-
-template <class T> class Stack : public List {
+template <class T> class Stack : public List<T> {
 public:
     void push(T value) {
         push_back(value);
@@ -208,16 +229,16 @@ public:
     }
 };
 
-template <class T> class Queue : public List {
+template <class T> class Queue : public List<T> {
 public:
     void push(T value) {
         push_back(value);
     }
 
     T pop() {
-        T temp = check();
         if (__first == nullptr)
-            return temp;
+            return 0;
+        T temp = check();
         NodeList<T> *p = __first;
         __first = p->next;
         delete p;
@@ -225,6 +246,6 @@ public:
     }
 
     T check() {
-        return (*this)[0];
+        return this->get(0)->__value;
     }
 };
