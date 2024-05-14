@@ -1,271 +1,312 @@
 #pragma once
 
-#include <iostream>
+#include <print>
 #include <random>
 
-template <class T> class NodeList {
-public:
-    NodeList<T> *prev, *next;
-    T __value;
+template <typename T> class list {
+private:
+    struct Node {
+        Node *next_, *prev_;
+        T value_;
 
-    NodeList(int value) :
-        prev(nullptr), next(nullptr), __value(value) {}
-};
+        Node(const T &value) :
+            next_(nullptr), prev_(nullptr), value_(value) {}
+    };
 
-template <class T> class List {
-protected:
-    NodeList<T> *__first;
-    NodeList<T> *__last;
-    size_t __size;
+    Node *first_, *last_;
+    std::size_t size_;
 
 public:
-    List() :
-        __first(nullptr), __last(nullptr), __size(0) {}
+    list() :
+        first_(nullptr), last_(nullptr), size_(0) {}
 
-    List(size_t n, const T &value) : List() {
-        for (size_t i = 0; i < n; i++)
-            push_back(value);
+    list(const list<T> &other) {
+        for (std::size_t i = 0; i < other.size_; i++)
+            push_back(other[i]);
+        size_ = other.size_;
     }
 
-    List(const List &l) {
-        copy(l);
-    }
-
-    ~List() {
+    ~list() {
         clear();
     }
 
     void clear() {
-        while (__size > 0)
+        for (std::size_t i = 0; i < size_; i++)
             pop_back();
     }
 
-    size_t size() {
-        return __size;
+    list(list<T> &&other) {
+        size_ = other.size_;
+        first_ = other.first_;
+        last_ = other.last_;
+
+        other.size_ = 0;
+        other.first_ = nullptr;
+        other.last_ = nullptr;
+    }
+
+    void push_back(const T &value) {
+        if (size_ == 0) {
+            first_ = new Node(value);
+            last_ = first_;
+            size_ = 1;
+        } else {
+            Node *p = new Node(value);
+            last_->next_ = p;
+            p->prev_ = last_;
+            size_++;
+        }
     }
 
     T pop_back() {
-        T res;
-        if (__size == 0)
-            return 0;
-        if (__size == 1) {
-            res = __first->__value;
-            delete __first;
-            __first = __last = nullptr;
+        if (size_ == 0)
+            throw std::logic_error("Clearing an empty list!");
+
+        T res = 0;
+
+        if (size_ == 1) {
+            res = first_->value_;
+            delete first_;
+            first_ = nullptr;
+            last_ = nullptr;
+            size_ = 0;
         } else {
-            NodeList<T> *p = __last;
-            __last = __last->prev;
-            __last->next = nullptr;
-            res = p->__value;
-            delete p;
+            res = last_->value_;
+            last_ = last_->prev_;
+            delete last_->next_;
+            last_->next_ = nullptr;
         }
-        __size--;
+
         return res;
     }
 
-    void push_back(T value) {
-        NodeList<T> *p = new NodeList<T>(value);
+    std::size_t get_size() {
+        return size;
+    }
 
-        if (__first == nullptr) {
-            __first = p;
-            __last = p;
+    T get(std::size_t index) {
+        if (index == 0)
+            return first_->value_;
+        if (index == size_ - 1)
+            return last_->value_;
+        if (index >= size_)
+            throw std::logic_error("Accessing a non-existent object!");
+
+        Node *p = first_;
+        if (index < size_ / 2)
+            for (std::size_t i = 0; i < index; i++)
+                p = p->next_;
+        else
+            for (std::size_t i = size_ - 1; i >= index; i--)
+                p = p->prev_;
+        return p->value_;
+    }
+
+    void push_front(const T &value) {
+        if (size_ == 0) {
+            first_ = new Node(value);
+            last_ = first_;
+            size_ = 1;
         } else {
-            p->prev = __last;
-            __last->next = p;
-            __last = p;
+            Node *p = new Node(value);
+            first_->prev_ = p;
+            p.next_ = first_;
+            size_++;
         }
-        __size++;
     }
 
     void print() {
-        if (__size != 0) {
-            NodeList<T> *p = __first;
-            for (int i = 0; i < __size; i++) {
-                std::cout << p->__value << " ";
-                p = p->next;
-            }
-            std::cout << std::endl;
-        } else
-            std::cout << "List is empty!" << std::endl;
+        for (std::size_t i = 0; i < size_; i++)
+            std::print("{} ", (*this)[i]);
+        std::println("");
     }
 
-    T operator[](size_t index) {
-        return this->get(index)->__value;
+    void fill_inc(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push_back(i);
     }
 
-    NodeList<T> *get(size_t index) {
-        if (__first == nullptr)
-            return nullptr;
-        NodeList<T> *p = __first;
-        for (size_t i = 0; i < index; i++) {
-            p = p->next;
-            if (!p)
-                return nullptr;
-        }
-        return p;
+    void fill_dec(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push_back(size - i);
     }
 
-    uint64_t CheckSum() {
-        uint64_t sum = 0;
-        for (size_t i = 0; i < __size; i++)
-            sum += (*this)[i];
-        return sum;
+    void fill_rand(std::size_t size) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, 100);
+        for (size_t i = 0; i < size; i++)
+            push_back(dist(gen));
     }
 
-    size_t RunNumber() {
-        size_t res = 1;
-        for (size_t i = 1; i < __size; i++)
-            if ((*this)[i - 1] > (*this)[i])
-                res++;
-        return res;
-    }
+    std::size_t merge(list<T> &a, list<T> &b, list<T> &c) {
+        std::size_t move_copare = 0;
+        
+        c.clear();
 
-    List operator=(const List &l) {
-        return copy(l);
-    }
+        std::size_t size_a = a.size_, size_b = b.size_;
+        std::size_t i = 0, j = 0;
 
-    void copy(List &l) {
-        clear();
-        for (size_t i = 0; i < l.size(); i++)
-            push_back(l[i]);
-    }
-
-    size_t Merge(List &a, List &b, List &c) {
-        size_t m = 0, cc = 0;
-
-        size_t i = 0, j = 0, k = 0;
-        size_t size_a = a.__size, size_b = b.__size;
         while (size_a != 0 && size_b != 0) {
-            if (a.get(i)->__value <= b.get(j)->__value) {
-                c.get(k++)->__value = a[i++];
+            if (a.get(i) <= b.get(j)) {
+                c.push_back(a.get(i++));
                 size_a--;
             } else {
-                c.get(k++)->__value = b[j++];
+                c.push_back(b.get(j++));
                 size_b--;
             }
-            cc++;
-            m++;
+            move_copare += 2;
         }
-        while (size_a-- > 0) {
-            c.get(k++)->__value = a[i++];
-            m++;
+        while (size_a > 0) {
+            c.push_back(a.get(i++));
+            size_a--;
+            move_copare++;
         }
-        while (size_b-- > 0) {
-            c.get(k++)->__value = b[j++];
-            m++;
+        while (size_b > 0) {
+            c.push_back(b.get(j++));
+            size_b--;
+            move_copare++;
         }
 
-        return m + cc;
+        return move_copare;
     }
 
-    size_t Splitting(List &a, List&b) {
-        size_t m = 0;
-        a.copy(*this);
-        size_t n = 1;
-        NodeList<T> *k = a.__first;
-        NodeList<T> *p = b.__first->next;
-        m += 2;
-        while (p != nullptr) {
-            n++;
-            k->next = p->next;
-            k = p;
-            p = p->next;
-            m += 3;
+    std::size_t split(list<T> &a, list<T> &b) {
+        std::size_t move_compare = 0;
+
+        a.clear();
+        b.clear();
+
+        a.first_ = this->first_;
+        b.first_ = this->first_->next_;
+        move_compare += 2;
+
+        Node *pointer_a = a.first_;
+        Node *pointer_b = b.first_;
+        move_compare += 2;
+
+        while (pointer_b != nullptr) {
+            pointer_a->next_ = pointer_b->next_;
+            pointer_a = pointer_b;
+            pointer_b = pointer_b->next_;
+            move_compare += 3;
         }
-        return m;
+
+        return move_compare;
     }
 
-    size_t MergeSort() {
-        size_t m = 0, c = 0;
-        List a(1000, 0);
-        List b(1000, 0);
+    std::size_t merge_sort() {
+        std::size_t move_copare = 0;
 
-        m += Splitting(a, b);
-        clear();
-        size_t p = 1, q = a.size(), r = b.size();
-        __size = q + r;
-        List c0, c1;
-        while (p < __size) {
+        list<T> a, b, c0, c1;
+
+        move_copare += split(a, b);
+        std::size_t p = 1;
+        while (p < this->size_) {
             c0.clear();
             c1.clear();
-            size_t i = 0, m = __size;
+
+            std::size_t i = 0, m = this->size_;
+
             while (m > 0) {
+                std::size_t q = 0, r = 0;
+                
                 if (m >= p)
                     q = p;
                 else
                     q = m;
                 m -= q;
+
                 if (m >= p)
                     r = p;
                 else
                     r = m;
                 m -= r;
-                Merge(a, b, i == 0 ? c0 : c1);
+
+                move_copare += merge(a, b, (i == 1 ? c1 : c0));
                 i = 1 - i;
             }
-            a.clear();
-            for (size_t ii = 1; ii < c0.size(); ii++)
-                a.push_back(c0[ii]);
-            b.clear();
-            for (size_t ii = 1; ii < c1.size(); ii++)
-                b.push_back(c1[ii]);
+            a.first_ = c0.first_;
+            b.first_ = c1.first_;
             p *= 2;
         }
-        copy(c0);
-        return m + c;
-    }
+        c0.last_->next_ = nullptr;
+        this->first_ = c0.first_;
 
-    void FillInc() {
-        for (size_t i = 0; i < __size; i++)
-            this->get(i)->__value = i;
-    }
-
-    void FillDec() {
-        for (size_t i = 1; i <= __size; i++)
-            this->get(i - 1)->__value = __size - i;
-    }
-
-    void FillRand() {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dist(0, 100);
-        for (size_t i = 0; i < __size; i++)
-            this->get(i)->__value = dist(gen);
+        return move_copare;
     }
 };
 
-template <class T> class Stack : public List<T> {
+template <typename T> class stack : private list<T> {
 public:
-    void push(T value) {
+    void push(const T &value) {
         push_back(value);
     }
 
     T pop() {
+        if (size_ == 0)
+            throw std::logic_error("Accessing a non-existent object!");
         return pop_back();
     }
 
     T check() {
-        return (*this)[__size - 1];
+        if (size_ == 0)
+            throw std::logic_error("Accessing a non-existent object!");
+        return this->get(get_size() - 1);
+    }
+
+    void fill_inc(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push(i);
+    }
+
+    void fill_dec(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push(size - i);
+    }
+
+    void fill_rand(std::size_t size) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, 100);
+        for (size_t i = 0; i < size; i++)
+            push(dist(gen));
     }
 };
 
-template <class T> class Queue : public List<T> {
+template <typename T> class queue : private list<T> {
 public:
-    void push(T value) {
-        push_back(value);
+    void push(const T &value) {
+        push_front(value);
     }
 
     T pop() {
-        if (__first == nullptr)
-            return 0;
-        T temp = check();
-        NodeList<T> *p = __first;
-        __first = p->next;
-        delete p;
-        return temp;
+        if (size_ == 0)
+            throw std::logic_error("Accessing a non-existent object!");
+        return pop_back();
     }
 
     T check() {
-        return this->get(0)->__value;
+        if (size_ == 0)
+            throw std::logic_error("Accessing a non-existent object!");
+        return this->get(get_size() - 1);
+    }
+
+    void fill_inc(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push(i);
+    }
+
+    void fill_dec(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push(size - i);
+    }
+
+    void fill_rand(std::size_t size) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, 100);
+        for (size_t i = 0; i < size; i++)
+            push(dist(gen));
     }
 };
