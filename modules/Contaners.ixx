@@ -3,205 +3,199 @@
 
 export module Contaners;
 
-class ContanerInt {
-protected:
-    int *__data;
-    size_t __size;
-
-public:
-    ContanerInt() {
-        __size = 0;
-        __data = new int[__size];
-    }
-
-    ~ContanerInt() {
-        delete[] __data;
-    }
-
-    void FillInc(size_t value) {
-        for (size_t i = 0; i < value; i++)
-            push(i);
-    }
-
-    void FillDec(size_t value) {
-        for (size_t i = 0; i < value; i++)
-            push(value - i);
-    }
-
-    void FillRand(size_t value) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dist(0, 100);
-        for (size_t i = 0; i < value; i++)
-            push(dist(gen));
-    }
-
-    void push(int value) {
-        if (__size == 0) {
-            __size++;
-            __data = new int[__size];
-            __data[0] = value;
-        } else {
-            int *data_copy = new int[__size];
-            for (int i = 0; i < __size; i++)
-                data_copy[i] = __data[i];
-            delete[] __data;
-            __data = new int[++__size];
-            for (int i = 0; i < __size - 1; i++)
-                __data[i] = data_copy[i];
-            delete[] data_copy;
-            __data[__size - 1] = value;
-        }
-    }
-
-    virtual int pop() = 0;
-    virtual int check() = 0;
-};
-
-export class StackInt : public ContanerInt {
-public:
-    int pop() override {
-        int *data_copy = new int[__size];
-        for (int i = 0; i < __size; i++)
-            data_copy[i] = __data[i];
-        delete[] __data;
-        __data = new int[--__size];
-        for (int i = 0; i < __size; i++)
-            __data[i] = data_copy[i];
-        int res = data_copy[__size];
-        delete[] data_copy;
-        return res;
-    }
-
-    int check() override {
-        return __data[__size - 1];
-    }
-};
-
-export class QueueInt : public ContanerInt {
-public:
-    int pop() override {
-        int *data_copy = new int[__size];
-        for (int i = 0; i < __size; i++)
-            data_copy[i] = __data[i];
-        delete[] __data;
-        __data = new int[--__size];
-        for (int i = 1; i < __size + 1; i++)
-            __data[i - 1] = data_copy[i];
-        int res = data_copy[0];
-        delete[] data_copy;
-        return res;
-    }
-
-    int check() override {
-        return __data[0];
-    }
-};
-
-export class NodeListInt {
-public:
-    NodeListInt *prev, *next;
-    int __value;
-
-    NodeListInt(int value) :
-        prev(nullptr), next(nullptr), __value(value) {}
-};
-
-export class ListInt {
+export template <typename T> class list {
 private:
-    NodeListInt *__first;
-    NodeListInt *__last;
-    size_t __size;
+    struct Node {
+        Node *next_, *prev_;
+        T value_;
+
+        Node(const T &value) :
+            next_(nullptr), prev_(nullptr), value_(value) {}
+    };
+
+    Node *first_, *last_;
+    std::size_t size_;
+
+    Node *get(std::size_t index) {
+        if (index == 0)
+            return first_;
+        if (index == size_ - 1)
+            return last_;
+        if (index >= size_)
+            throw std::logic_error("Accessing a non-existent object!");
+
+        Node *p = first_;
+        if (index < size_ / 2)
+            for (std::size_t i = 0; i < index; i++)
+                p = p->next_;
+        else
+            for (std::size_t i = size_ - 1; i >= index; i--)
+                p = p->prev_;
+        return p;
+    }
 
 public:
-    ListInt() :
-        __first(nullptr), __last(nullptr), __size(0) {}
+    list() :
+        first_(nullptr), last_(nullptr), size_(0) {}
 
-    ~ListInt() {
+    list(const list<T> &other) {
+        for (std::size_t i = 0; i < other.size_; i++)
+            push_back(other[i]);
+        size_ = other.size_;
+    }
+
+    ~list() {
         clear();
     }
 
     void clear() {
-        while (__size > 0)
+        for (std::size_t i = 0; i < size_; i++)
             pop_back();
     }
 
-    void pop_back() {
-        if (__size == 0)
-            return;
-        if (__size == 1) {
-            delete __first;
-            __first = __last = nullptr;
-        } else {
-            NodeListInt *p = __last;
-            __last = __last->prev;
-            __last->next = nullptr;
-            delete p;
-        }
-        __size--;
+    list(list<T> &&other) {
+        size_ = other.size_;
+        first_ = other.first_;
+        last_ = other.last_;
+
+        other.size_ = 0;
+        other.first_ = nullptr;
+        other.last_ = nullptr;
     }
 
-    void push_back(int value) {
-        NodeListInt *p = new NodeListInt(value);
-
-        if (__first == nullptr) {
-            __first = p;
-            __last = p;
+    void push_back(const T &value) {
+        if (size_ == 0) {
+            first_ = new Node(value);
+            last_ = first_;
+            size_ = 1;
         } else {
-            p->prev = __last;
-            __last->next = p;
-            __last = p;
+            Node *p = new Node(value);
+            last_->next_ = p;
+            p.prev_ = last_;
+            size_++;
         }
-        __size++;
+    }
+
+    T pop_back() {
+        if (size_ == 0)
+            throw std::logic_error("Clearing an empty list!");
+
+        T res = 0;
+
+        if (size_ == 1) {
+            res = first_->value_;
+            delete first_;
+            first_ = nullptr;
+            last_ = nullptr;
+            size_ = 0;
+        } else {
+            res = last_->value_;
+            last_ = last_->prev_;
+            delete last_->next_;
+            last_->next_ = nullptr;
+        }
+
+        return res;
+    }
+
+    std::size_t get_size() {
+        return size;
+    }
+
+    T operator[](std::size_t index) {
+        return get(index)->value_;
+    }
+
+    void push_front(const T &value) {
+        if (size_ == 0) {
+            first_ = new Node(value);
+            last_ = first_;
+            size_ = 1;
+        } else {
+            Node *p = new Node(value);
+            first_->prev_ = p;
+            p.next_ = first_;
+            size_++;
+        }
     }
 
     void print() {
-        if (__size != 0) {
-            NodeListInt *p = __first;
-            for (int i = 0; i < __size; i++) {
-                std::print("{} ", p->__value);
-                p = p->next;
-            }
-            std::println("");
-        } else
-            std::println("List is empty!");
+        for (std::size_t i = 0; i < size_; i++)
+            std::print("{} ", (*this)[i]);
+        std::println("");
+    }
+};
+
+export template <typename T> class stack : private list<T> {
+public:
+    void push(const T &value) {
+        push_back(value);
     }
 
-    int operator[](size_t index) {
-        int res = INT32_MAX;
-        if (index < __size and __first != nullptr) {
-            NodeListInt *p = __first;
-            for (size_t i = 0; i < index; i++)
-                p = p->next;
-            res = p->__value;
-        }
-        return res;
+    T pop() {
+        if (size_ == 0)
+            throw std::logic_error("Accessing a non-existent object!");
+        return pop_back();
     }
 
-    NodeListInt *get(size_t index) {
-        if (__first == nullptr)
-            return nullptr;
-        NodeListInt *p = __first;
-        for (size_t i = 0; i < index; i++) {
-            p = p->next;
-            if (!p)
-                return nullptr;
-        }
-        return p;
+    T check() {
+        if (size_ == 0)
+            throw std::logic_error("Accessing a non-existent object!");
+        return (*this)[get_size() - 1];
     }
 
-    int CheckSum() {
-        int sum = 0;
-        for (size_t i = 0; i < __size; i++)
-            sum += (*this)[i];
-        return sum;
+    void fill_inc(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push(i);
     }
 
-    size_t RunNumber() {
-        size_t res = 1;
-        for (size_t i = 1; i < __size; i++)
-            if ((*this)[i - 1] > (*this)[i])
-                res++;
-        return res;
+    void fill_dec(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push(size - i);
+    }
+
+    void fill_rand(std::size_t size) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, 100);
+        for (size_t i = 0; i < size; i++)
+            push(dist(gen));
+    }
+};
+
+export template <typename T> class queue : private list<T> {
+public:
+    void push(const T &value) {
+        push_front(value);
+    }
+
+    T pop() {
+        if (size_ == 0)
+            throw std::logic_error("Accessing a non-existent object!");
+        return pop_back();
+    }
+
+    T check() {
+        if (size_ == 0)
+            throw std::logic_error("Accessing a non-existent object!");
+        return (*this)[get_size() - 1];
+    }
+
+    void fill_inc(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push(i);
+    }
+
+    void fill_dec(std::size_t size) {
+        for (std::size_t i = 0; i < size; i++)
+            push(size - i);
+    }
+
+    void fill_rand(std::size_t size) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, 100);
+        for (size_t i = 0; i < size; i++)
+            push(dist(gen));
     }
 };

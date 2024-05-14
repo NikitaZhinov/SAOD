@@ -11,44 +11,44 @@ int main() {
     std::setlocale(LC_ALL, "rus");
 
     std::println("Stack");
-    StackInt stack;
+    stack<int> stack;
     size_t size = 10;
 
-    stack.FillInc(size);
+    stack.fill_inc(size);
     for (int i = 0; i < size; i++)
         std::print("{} ", stack.pop());
     std::println("");
 
-    stack.FillDec(size);
+    stack.fill_dec(size);
     for (int i = 0; i < size; i++)
         std::print("{} ", stack.pop());
     std::println("");
 
-    stack.FillRand(size);
+    stack.fill_rand(size);
     for (int i = 0; i < size; i++)
         std::print("{} ", stack.pop());
     std::println("");
 
     std::println("\nQueue");
-    QueueInt queue;
+    queue<int> queue;
 
-    queue.FillInc(size);
+    queue.fill_inc(size);
     for (int i = 0; i < size; i++)
         std::print("{} ", queue.pop());
     std::println("");
 
-    queue.FillDec(size);
+    queue.fill_dec(size);
     for (int i = 0; i < size; i++)
         std::print("{} ", queue.pop());
     std::println("");
 
-    queue.FillRand(size);
+    queue.fill_rand(size);
     for (int i = 0; i < size; i++)
         std::print("{} ", queue.pop());
     std::println("");
 
     std::println("\nList");
-    ListInt list;
+    list<int> list;
 
     // заполнение списка
     for (int i = 0; i < size; i++)
