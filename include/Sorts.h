@@ -1,9 +1,9 @@
+#pragma once
+
 #include <cmath>
 #include <vector>
 
-export module Sorts;
-
-export template <class T> size_t SelectSort(T &arr) {
+template <class T> size_t SelectSort(T &arr) {
     size_t m = 0, c = 0;
     for (size_t i = 0; i < arr.size() - 1; i++) {
         int snp = i;
@@ -18,7 +18,7 @@ export template <class T> size_t SelectSort(T &arr) {
     return m + c;
 }
 
-export template <class T> size_t BubbleSort(T &arr) {
+template <class T> size_t BubbleSort(T &arr) {
     size_t m = 0, c = 0;
     for (size_t i = 0; i < arr.size(); i++) {
         for (size_t j = 1; j < arr.size() - i; j++) {
@@ -32,7 +32,7 @@ export template <class T> size_t BubbleSort(T &arr) {
     return m + c;
 }
 
-export template <class T> size_t ShakerSort(T &arr) {
+template <class T> size_t ShakerSort(T &arr) {
     size_t L = 0, R = arr.size() - 1, k = arr.size() - 1;
     size_t m = 0, c = 0;
     do {
@@ -58,7 +58,7 @@ export template <class T> size_t ShakerSort(T &arr) {
     return m + c;
 }
 
-export template <class T> size_t InsertSort(T &arr) {
+template <class T> size_t InsertSort(T &arr) {
     size_t m = 0, c = 0;
     for (size_t i = 1; i < arr.size(); i++) {
         bool f = true;
@@ -79,7 +79,7 @@ export template <class T> size_t InsertSort(T &arr) {
     return m + c;
 }
 
-export template <class T> size_t ShellSort(T &arr) {
+template <class T> size_t ShellSort(T &arr) {
     size_t m = 0, c = 0;
     size_t M = (int)std::log2(arr.size()) - 1;
     std::vector<int> h(M);
@@ -102,7 +102,7 @@ export template <class T> size_t ShellSort(T &arr) {
     return m + c;
 }
 
-export template <class T, class C> size_t ShellSort(T &arr, C commpare) {
+template <class T, class C> size_t ShellSort(T &arr, C commpare) {
     size_t m = 0, c = 0;
     size_t M = (int)std::log2(arr.size()) - 1;
     std::vector<int> h(M);
@@ -148,7 +148,7 @@ template <class T> void build_heap(T &arr, size_t l, size_t r, size_t &m, size_t
     m += 2;
 }
 
-export template <class T> size_t HeapSort(T &arr) {
+template <class T> size_t HeapSort(T &arr) {
     size_t m = 0, c = 0;
     for (long long l = arr.size() / 2; l >= 0; l--)
         build_heap(arr, l, arr.size() - 1, m, c);
@@ -162,7 +162,7 @@ export template <class T> size_t HeapSort(T &arr) {
 }
 
 template <class T> int64_t HoaraSort(T &arr, int64_t left, int64_t right, size_t &m, size_t &c) {
-    auto pivo = arr[left];
+    auto pivo = arr[(left + right) / 2];
     m++;
     while (left <= right) {
         c += 2;
@@ -190,7 +190,7 @@ template <class T> void QuickSort(T &arr, int64_t start, int64_t end, size_t &m,
     QuickSort(arr, rightStart, end, m, c);
 }
 
-export template <class T> size_t QuickSort(T &arr) {
+template <class T> size_t QuickSort(T &arr) {
     size_t m = 0, c = 0;
     QuickSort(arr, 0, arr.size() - 1, m, c);
     return m + c;
