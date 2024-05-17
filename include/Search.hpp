@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdlib>
+#include <cstddef>
 
 template <typename T> long long BinarySearch1(const T &arr, std::size_t len, const T &x, std::size_t &count_of_compares) {
     count_of_compares = 0;
