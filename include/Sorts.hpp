@@ -2,12 +2,13 @@
 
 #include <cmath>
 #include <vector>
+#include <utility>
 
-template <class T> size_t SelectSort(T &arr) {
-    size_t m = 0, c = 0;
-    for (size_t i = 0; i < arr.size() - 1; i++) {
+template <typename T> std::size_t SelectSort(T &arr, std::size_t len) {
+    std::size_t m = 0, c = 0;
+    for (std::size_t i = 0; i < len - 1; i++) {
         int snp = i;
-        for (size_t j = i + 1; j < arr.size(); j++) {
+        for (std::size_t j = i + 1; j < len; j++) {
             if (arr[j] < arr[snp])
                 snp = j;
             c++;
@@ -18,10 +19,10 @@ template <class T> size_t SelectSort(T &arr) {
     return m + c;
 }
 
-template <class T> size_t BubbleSort(T &arr) {
-    size_t m = 0, c = 0;
-    for (size_t i = 0; i < arr.size(); i++) {
-        for (size_t j = 1; j < arr.size() - i; j++) {
+template <typename T> std::size_t BubbleSort(T &arr, std::size_t len) {
+    std::size_t m = 0, c = 0;
+    for (std::size_t i = 0; i < len; i++) {
+        for (std::size_t j = 1; j < len - i; j++) {
             if (arr[j] < arr[j - 1]) {
                 std::swap(arr[j], arr[j - 1]);
                 m += 3;
@@ -32,11 +33,11 @@ template <class T> size_t BubbleSort(T &arr) {
     return m + c;
 }
 
-template <class T> size_t ShakerSort(T &arr) {
-    size_t L = 0, R = arr.size() - 1, k = arr.size() - 1;
-    size_t m = 0, c = 0;
+template <typename T> std::size_t ShakerSort(T &arr, std::size_t len) {
+    std::size_t L = 0, R = len - 1, k = len - 1;
+    std::size_t m = 0, c = 0;
     do {
-        for (size_t j = R; j > L; j--) {
+        for (std::size_t j = R; j > L; j--) {
             if (arr[j] < arr[j - 1]) {
                 std::swap(arr[j], arr[j - 1]);
                 m += 3;
@@ -45,7 +46,7 @@ template <class T> size_t ShakerSort(T &arr) {
             c++;
         }
         L = k;
-        for (size_t j = L; j < R; j++) {
+        for (std::size_t j = L; j < R; j++) {
             if (arr[j] > arr[j + 1]) {
                 std::swap(arr[j], arr[j + 1]);
                 m += 3;
@@ -58,9 +59,9 @@ template <class T> size_t ShakerSort(T &arr) {
     return m + c;
 }
 
-template <class T> size_t InsertSort(T &arr) {
-    size_t m = 0, c = 0;
-    for (size_t i = 1; i < arr.size(); i++) {
+template <typename T> std::size_t InsertSort(T &arr, std::size_t len) {
+    std::size_t m = 0, c = 0;
+    for (std::size_t i = 1; i < len; i++) {
         bool f = true;
         auto t = arr[i];
         long long j = i - 1;
@@ -79,15 +80,15 @@ template <class T> size_t InsertSort(T &arr) {
     return m + c;
 }
 
-template <class T> size_t ShellSort(T &arr) {
-    size_t m = 0, c = 0;
-    size_t M = (int)std::log2(arr.size()) - 1;
+template <typename T> std::size_t ShellSort(T &arr, std::size_t len) {
+    std::size_t m = 0, c = 0;
+    std::size_t M = (int)std::log2(len) - 1;
     std::vector<int> h(M);
     h[0] = 1;
     for (int i = 1; i < M; i++)
         h[i] = 2 * h[i - 1] + 1;
     for (int a = M - 1; a >= 0; a--) {
-        for (size_t i = h[a]; i < arr.size(); i++) {
+        for (std::size_t i = h[a]; i < len; i++) {
             bool f = true;
             for (int j = i - h[a]; j >= 0 and arr[j] > arr[j + h[a]]; j -= h[a]) {
                 std::swap(arr[j], arr[j + h[a]]);
@@ -102,15 +103,15 @@ template <class T> size_t ShellSort(T &arr) {
     return m + c;
 }
 
-template <class T, class C> size_t ShellSort(T &arr, C commpare) {
-    size_t m = 0, c = 0;
-    size_t M = (int)std::log2(arr.size()) - 1;
+template <class T, class C> std::size_t ShellSort(T &arr, std::size_t len, C commpare) {
+    std::size_t m = 0, c = 0;
+    std::size_t M = (int)std::log2(len) - 1;
     std::vector<int> h(M);
     h[0] = 1;
     for (int i = 1; i < M; i++)
         h[i] = 2 * h[i - 1] + 1;
     for (int a = M - 1; a >= 0; a--) {
-        for (size_t i = h[a]; i < arr.size(); i++) {
+        for (std::size_t i = h[a]; i < len; i++) {
             bool f = true;
             for (int j = i - h[a]; j >= 0 and commpare(arr[j], arr[j + h[a]]); j -= h[a]) {
                 std::swap(arr[j], arr[j + h[a]]);
@@ -125,11 +126,11 @@ template <class T, class C> size_t ShellSort(T &arr, C commpare) {
     return m + c;
 }
 
-template <class T> void build_heap(T &arr, size_t l, size_t r, size_t &m, size_t &c) {
+template <typename T> void build_heap(T &arr, std::size_t l, std::size_t r, std::size_t &m, std::size_t &c) {
     auto x = arr[l];
-    size_t i = l;
+    std::size_t i = l;
     while (true) {
-        size_t j = 2 * i;
+        std::size_t j = 2 * i;
         if (j > r)
             break;
         if (j < r and arr[j + 1] <= arr[j])
@@ -148,11 +149,11 @@ template <class T> void build_heap(T &arr, size_t l, size_t r, size_t &m, size_t
     m += 2;
 }
 
-template <class T> size_t HeapSort(T &arr) {
-    size_t m = 0, c = 0;
-    for (long long l = arr.size() / 2; l >= 0; l--)
-        build_heap(arr, l, arr.size() - 1, m, c);
-    size_t r = arr.size() - 1;
+template <typename T> std::size_t HeapSort(T &arr, std::size_t len) {
+    std::size_t m = 0, c = 0;
+    for (long long l = len / 2; l >= 0; l--)
+        build_heap(arr, l, len - 1, m, c);
+    std::size_t r = len - 1;
     while (r > 0) {
         std::swap(arr[0], arr[r--]);
         m += 3;
@@ -161,7 +162,7 @@ template <class T> size_t HeapSort(T &arr) {
     return m + c;
 }
 
-template <class T> int64_t HoaraSort(T &arr, int64_t left, int64_t right, size_t &m, size_t &c) {
+template <typename T> int HoaraSort(T &arr, int left, int right, std::size_t &m, std::size_t &c) {
     auto pivo = arr[(left + right) / 2];
     m++;
     while (left <= right) {
@@ -182,16 +183,16 @@ template <class T> int64_t HoaraSort(T &arr, int64_t left, int64_t right, size_t
     return left;
 }
 
-template <class T> void QuickSort(T &arr, int64_t start, int64_t end, size_t &m, size_t &c) {
+template <typename T> void QuickSort(T &arr, int start, int end, std::size_t &m, std::size_t &c) {
     if (start >= end)
         return;
-    int64_t rightStart = HoaraSort(arr, start, end, m, c);
+    int rightStart = HoaraSort(arr, start, end, m, c);
     QuickSort(arr, start, rightStart - 1, m, c);
     QuickSort(arr, rightStart, end, m, c);
 }
 
-template <class T> size_t QuickSort(T &arr) {
-    size_t m = 0, c = 0;
-    QuickSort(arr, 0, arr.size() - 1, m, c);
+template <typename T> std::size_t QuickSort(T &arr, std::size_t len) {
+    std::size_t m = 0, c = 0;
+    QuickSort(arr, 0, len - 1, m, c);
     return m + c;
 }

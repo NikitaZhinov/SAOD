@@ -1,17 +1,17 @@
-﻿#include "BaseArrFuncs.h"
-#include "Lists.h"
-#include "Search.h"
-#include "Sorts.h"
+﻿#include "BaseArrFuncs.hpp"
+#include "Lists.hpp"
+#include "Search.hpp"
+#include "Sorts.hpp"
 
 #include <locale>
 
 int main() {
     std::setlocale(LC_ALL, "rus");
 
-    stack<int> test;
+    list<int> test;
     test.fill_inc(10);
     for (int i = 0; i < 10; i++)
-        std::cout << test.pop() << " ";
+        std::cout << test(i) << " ";
 
     return 0;
 }
