@@ -179,7 +179,6 @@ public:
                 __push_back__(pr->value_);
                 pr = pr->next_;
             }
-            res.size_ += right.size_;
         }
 
         return res;
@@ -192,7 +191,6 @@ public:
                 __push_back__(pr->value_);
                 pr = pr->next_;
             }
-            size_ += right.size_;
         }
     }
 };
@@ -236,15 +234,9 @@ public:
         else if (index == this->size_ - 1)
             res = this->last_;
         else if (index < this->size_) {
-            if (index < this->size_ / 2) {
-                res = this->first_;
-                for (std::size_t i = 0; i < index; i++)
-                    res = res->next_;
-            } else {
-                res = this->last_;
-                for (std::size_t i = this->size_ - 1; i >= index; i--)
-                    res = res->prev_;
-            }
+            res = this->first_;
+            for (std::size_t i = 0; i < index; i++)
+                res = res->next_;
         }
 
         return res->value_;
