@@ -204,7 +204,7 @@ template <typename T> std::size_t digitalSort(list<T> &list_) {
     int count_of_queue = 256;
 
     for (std::size_t i = 0; i < std::pow(2, sizeof(T) * 8) / count_of_queue; i++) {
-        std::vector<queue<T>> Q(count_of_queue);
+        queue<T> Q[count_of_queue];
 
         std::size_t len_list = list_.get_size();
         for (std::size_t j = 0; j < len_list; j++)

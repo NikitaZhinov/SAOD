@@ -147,7 +147,7 @@ public:
     void fill_dec(std::size_t size) {
         T a = 0;
         for (std::size_t i = 0; i < size; i++)
-            __push_back__(size_ - ++a);
+            __push_back__(size - (++a));
     }
 
     void fill_rand(std::size_t size, const T &min_value, const T &max_value) {
@@ -185,7 +185,7 @@ public:
         return res;
     }
 
-    IList<T> operator+=(const IList<T> &right) {
+    void operator+=(const IList<T> &right) {
         if (right.first_ != nullptr) {
             NodeList<T> *pr = right.first_;
             for (std::size_t i = 0; i < right.size_; i++) {
@@ -194,7 +194,6 @@ public:
             }
             size_ += right.size_;
         }
-        return *this;
     }
 };
 
