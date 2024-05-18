@@ -1,8 +1,13 @@
 ﻿#include "Lists.hpp"
 #include "Sorts.hpp"
+#include <cmath>
+#include <iostream>
 
 int main() {
     std::setlocale(LC_ALL, "rus");
+
+    // DIGITAL SORT
+    std::cout << " N  | Teor | Dec  | Rand | Inc" << std::endl;
 
     for (int len = 100; len <= 500; len += 100) {
         list<int> up;

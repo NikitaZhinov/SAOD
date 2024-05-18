@@ -4,6 +4,8 @@
 
 #include <cmath>
 #include <cstddef>
+#include <iterator>
+#include <ratio>
 #include <vector>
 
 template <typename T> std::size_t selectSort(T &arr, std::size_t len) {
@@ -199,20 +201,105 @@ template <typename T> std::size_t quickSort(T &arr, std::size_t len) {
     return m + c;
 }
 
-template <typename T> std::size_t digitalSort(list<T> &list_) {
-    std::size_t t = 0;
-    int count_of_queue = 256;
+template <typename T> std::size_t merge(const list<T> &a, const list<T> &b, queue<T> &c) {
+    std::size_t move_copare = 0;
 
-    for (std::size_t i = 0; i < std::pow(2, sizeof(T) * 8) / count_of_queue; i++) {
-        queue<T> Q[count_of_queue];
+    std::size_t size_a = a.get_size();
+    std::size_t size_b = b.get_size();
+    std::size_t i = 0, j = 0;
 
-        for (std::size_t j = 0; j < list_.get_size(); j++)
-            Q[list_(j) / (int)std::pow(count_of_queue, i) % count_of_queue].push(list_(j));
-
-        list_.clear();
-        for (int j = 0; j < 256; j++)
-            list_ += Q[j];
+    while (size_a > 0 and size_b > 0) {
+        if (a(i) <= b(j)) {
+            c.push(a(i++));
+            size_a--;
+        } else {
+            c.push(b(j++));
+            size_b--;
+        }
+        move_copare += 2;
+    }
+    while (size_a > 0) {
+        c.push(a(i++));
+        size_a--;
+        move_copare++;
+    }
+    while (size_b > 0) {
+        c.push(b(j++));
+        size_b--;
+        move_copare++;
     }
 
-    return t;
+    return move_copare;
+}
+
+template <typename T> void split(const list<T> &s, list<T> &a, list<T> &b) {
+    if (s.is_empty())
+        return;
+
+    a.clear();
+    b.clear();
+
+    bool f = true;
+    for (std::size_t i = 0; i < s.get_size(); i++) {
+        if (f)
+            a.push_back(s(i));
+        else
+            b.push_back(s(i));
+        f = !f;
+    }
+}
+
+template <typename T> std::size_t mergeSort(list<T> &s) {
+    std::size_t move_copare = 0;
+
+    list<T> a, b;
+    queue<T> c[2];
+
+    split(s, a, b);
+
+    std::size_t p = 1;
+    while (p < s.get_size()) {
+        c[0].clear();
+        c[1].clear();
+
+        int i = 0;
+        std::size_t m = s.get_size();
+        while (m > 0) {
+            m -= a.get_size();
+            m -= b.get_size();
+            move_copare += merge(a, b, c[i]);
+            i = 1 - i;
+        }
+
+        a.copy(c[0]);
+        b.copy(c[1]);
+        p *= 2;
+    }
+
+    s.copy(c[0]);
+
+    return move_copare;
+}
+
+template <typename T> std::size_t digitalSort(list<T> &list_) {
+    std::size_t m = 0;
+    int count_of_queue = 256;
+
+    for (std::size_t i = 0; i < sizeof(T); i++) {
+        queue<T> Q[count_of_queue];
+
+        for (std::size_t j = 0; j < list_.get_size(); j++) {
+            int index = (list_(j) / (int)std::pow(count_of_queue, i)) % count_of_queue;
+            m++;
+            Q[index].push(list_(j));
+        }
+
+        list_.clear();
+        for (int j = count_of_queue - 1; j >= 0; j--) {
+            list_ += Q[j];
+            m++;
+        }
+    }
+
+    return m;
 }
