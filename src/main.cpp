@@ -41,12 +41,27 @@ int main() {
     // DIRECT LINKING
     std::cout << std::endl << " Size table | Number of chars | Number of collisions" << std::endl;
 
-    std::string str = "hgcgh,jkl/h.gmcfgvhjkgjhchbjkh.gmchb,jk.hghmchb,jk.hgfhgjkjygufhgchmjkuiygfhg";
+    std::string str = "hgcgh,jkl/h.gmcfgvhjkgjhchbjkh.gmchb,jk.hghmchb,jk.hgfhgjkjygufhgchmjkuiygfhgrbkjso[jphigbjlwrnbfjos[bjosnigjw fbos fjoxgbje nlfbgjsr nbjlfj]]";
     int i = 0;
     for (int len = 11; len <= 101; len++) {
         if (is_simple(len)) {
             std::cout << "         " << len << " | " << std::setw(15) << str.length() << " | " << std::setw(20)
                       << directLinking(str, len) << std::endl;
+            i++;
+        }
+        if (i >= 10)
+            break;
+    }
+
+    std::cout << std::endl << " Size table | Number of chars | Number of collisions" << std::endl
+                           << "------------|-----------------| Линейка | Квадрат" << std::endl;
+
+    str = "hgcgh,jkl/h.gmcfgvhjkgjhchbjkh.gmchb,jk.hghmchb,jk.hgfhgjkjygufhgchmjkuiygfhgrbkjso[jphigbjlwrnbfjos[bjosnigjw fbos fjoxgbje nlfbgjsr nbjlfj]]";
+    i = 0;
+    for (int len = 11; len <= 101; len++) {
+        if (is_simple(len)) {
+            std::cout << "         " << len << " | " << std::setw(15) << str.length() << " | " << std::setw(7)
+                      << openAddressingLinearSample(str, len) << " | " << std::setw(7) << openAddressingQuadraticSample(str, len) << std::endl;
             i++;
         }
         if (i >= 10)

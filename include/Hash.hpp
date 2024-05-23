@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lists.hpp"
+
 #include <cstddef>
 #include <stdexcept>
 
@@ -36,6 +37,31 @@ private:
         return key % size_table;
     }
 
+    bool is_exist(unsigned hash) {
+        bool res = false;
+        HashNode<TValue> *p = firts;
+        while (p != nullptr) {
+            if (p->key == hash) {
+                res = true;
+                break;
+            }
+            p = p->next;
+        }
+        return res;
+    }
+
+    void addNew(unsigned hash, const TValue &value) {
+        HashNode<TValue> *p = new HashNode<TValue>(hash, value);
+        if (size == 0)
+            last = firts = p;
+        else {
+            p->prev = last;
+            last->next = p;
+            last = p;
+        }
+        size++;
+    }
+
 public:
     HashTable() :
         firts(nullptr), last(nullptr), size(0) {}
@@ -55,7 +81,7 @@ public:
         }
     }
 
-    void add(const TKey &key, const TValue &value, std::size_t size_table) {
+    void addDirectLinking(const TKey &key, const TValue &value, std::size_t size_table) {
         unsigned hash = getHash(key, size_table);
         bool is_exist = false;
         HashNode<TValue> *p = firts;
@@ -68,17 +94,56 @@ public:
         }
         if (is_exist)
             p->data->push_back(value);
-        else {
-            p = new HashNode<TValue>(hash, value);
-            if (size == 0)
-                last = firts = p;
-            else {
-                p->prev = last;
-                last->next = p;
-                last = p;
+        else
+            addNew(hash, value);
+    }
+
+    void addOpenAddressingQuadraticSample(const TKey &key, const TValue &value, std::size_t size_table) {
+        unsigned hash = getHash(key, size_table);
+        HashNode<TValue> *p = firts;
+
+        if (is_exist(hash)) {
+            int h = 1;
+            while (is_exist(hash)) {
+                hash += h * h;
+                if (hash >= size_table)
+                    hash -= size_table;
+                if (hash >= size_table) {
+                    hash = hash + size_table - h * h;
+                    break;
+                }
+                h++;
             }
-            size++;
-        }
+            if (is_exist(hash)) {
+                while (p->key != hash)
+                    p = p->next;
+                p->data->push_back(value);
+            } else
+                addNew(hash, value);
+        } else
+            addNew(hash, value);
+    }
+
+    void addOpenAddressingLinearSample(const TKey &key, const TValue &value, std::size_t size_table) {
+        unsigned hash = getHash(key, size_table);
+        HashNode<TValue> *p = firts;
+
+        if (is_exist(hash)) {
+            while (is_exist(hash)) {
+                hash++;
+                if (hash >= size_table) {
+                    hash--;
+                    break;
+                }
+            }
+            if (is_exist(hash)) {
+                while (p->key != hash)
+                    p = p->next;
+                p->data->push_back(value);
+            } else
+                addNew(hash, value);
+        } else
+            addNew(hash, value);
     }
 
     void remove(const TKey &key) {
@@ -116,4 +181,5 @@ public:
 };
 
 std::size_t directLinking(const std::string &str, std::size_t size_table);
-void openAddressing();
+std::size_t openAddressingLinearSample(const std::string &str, std::size_t size_table);
+std::size_t openAddressingQuadraticSample(const std::string &str, std::size_t size_table);
