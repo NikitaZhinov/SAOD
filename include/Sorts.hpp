@@ -4,8 +4,6 @@
 
 #include <cmath>
 #include <cstddef>
-#include <iterator>
-#include <ratio>
 #include <vector>
 
 template <typename T> std::size_t selectSort(T &arr, std::size_t len) {
@@ -201,30 +199,26 @@ template <typename T> std::size_t quickSort(T &arr, std::size_t len) {
     return m + c;
 }
 
-template <typename T> std::size_t merge(const list<T> &a, const list<T> &b, queue<T> &c) {
+template <typename T> std::size_t merge(list<T> &a, std::size_t size_a, list<T> &b, std::size_t size_b, queue<T> &c) {
     std::size_t move_copare = 0;
 
-    std::size_t size_a = a.get_size();
-    std::size_t size_b = b.get_size();
-    std::size_t i = 0, j = 0;
-
     while (size_a > 0 and size_b > 0) {
-        if (a(i) <= b(j)) {
-            c.push(a(i++));
+        if (a(0) <= b(0)) {
+            c.push(a.pop_front());
             size_a--;
         } else {
-            c.push(b(j++));
+            c.push(b.pop_front());
             size_b--;
         }
         move_copare += 2;
     }
     while (size_a > 0) {
-        c.push(a(i++));
+        c.push(a.pop_front());
         size_a--;
         move_copare++;
     }
     while (size_b > 0) {
-        c.push(b(j++));
+        c.push(b.pop_front());
         size_b--;
         move_copare++;
     }
@@ -235,9 +229,6 @@ template <typename T> std::size_t merge(const list<T> &a, const list<T> &b, queu
 template <typename T> void split(const list<T> &s, list<T> &a, list<T> &b) {
     if (s.is_empty())
         return;
-
-    a.clear();
-    b.clear();
 
     bool f = true;
     for (std::size_t i = 0; i < s.get_size(); i++) {
@@ -258,6 +249,9 @@ template <typename T> std::size_t mergeSort(list<T> &s) {
     split(s, a, b);
 
     std::size_t p = 1;
+    std::size_t q = 0;
+    std::size_t r = 0;
+
     while (p < s.get_size()) {
         c[0].clear();
         c[1].clear();
@@ -265,8 +259,17 @@ template <typename T> std::size_t mergeSort(list<T> &s) {
         int i = 0;
         std::size_t m = s.get_size();
         while (m > 0) {
-            m -= a.get_size();
-            m -= b.get_size();
+            if (m >= p)
+                q = p;
+            else
+                q = m;
+            m -= q;
+            if (m >= p)
+                r = p;
+            else
+                r = m;
+            m -= r;
+
             move_copare += merge(a, b, c[i]);
             i = 1 - i;
         }

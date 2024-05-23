@@ -1,7 +1,22 @@
-﻿#include "Lists.hpp"
+﻿#include "Hash.hpp"
+#include "Lists.hpp"
 #include "Sorts.hpp"
+
 #include <cmath>
+#include <cstring>
+#include <iomanip>
 #include <iostream>
+
+bool is_simple(int num) {
+    bool res = true;
+    for (int k = 2; k <= (int)std::sqrt(num) + 1; k++) {
+        if (num % k == 0) {
+            res = false;
+            break;
+        }
+    }
+    return res;
+}
 
 int main() {
     std::setlocale(LC_ALL, "rus");
@@ -20,6 +35,22 @@ int main() {
 
         std::cout << len << " | " << sizeof(int) * (len + 256) << " | " << digitalSort(down)
                   << " | " << digitalSort(rand) << " | " << digitalSort(up) << std::endl;
+    }
+
+    // HASH
+    // DIRECT LINKING
+    std::cout << std::endl << " Size table | Number of chars | Number of collisions" << std::endl;
+
+    std::string str = "hgcgh,jkl/h.gmcfgvhjkgjhchbjkh.gmchb,jk.hghmchb,jk.hgfhgjkjygufhgchmjkuiygfhg";
+    int i = 0;
+    for (int len = 11; len <= 101; len++) {
+        if (is_simple(len)) {
+            std::cout << "         " << len << " | " << std::setw(15) << str.length() << " | " << std::setw(20)
+                      << directLinking(str, len) << std::endl;
+            i++;
+        }
+        if (i >= 10)
+            break;
     }
 
     return 0;
